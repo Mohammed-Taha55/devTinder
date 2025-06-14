@@ -1,21 +1,19 @@
 const express = require('express')
 const app = express();
-app.get(
-    "/user",
-    (req,res,next)=>{
-    console.log("handling the user router 1!!");
-    next();
-// res.send("1st response")
-},
-(req,res,next)=>{
-    console.log("handling the user router 2!!");
-    next()
-},
-(req,res,next)=>{
-console.log("handling router user 3!!");
-res.send("3rd response");
-}
-);
+const {adminauth, userauth} = require("./middlewares/auth");
+app.use("/admin",adminauth);
+app.post("/user/login",(req,res)=>{
+res.send("user logged in");
+});
+app.get("/user/data",userauth,(req,res)=>{
+    res.send("user sent data");
+});
+app.get("/admin/getdata",(req,res)=>{
+    res.send("get data");
+});
+app.get("/admin/delete/user",(req,res)=>{
+    res.send("deleted user");
+});
 app.listen(7777,()=>{
     console.log("listening on port 7777");
 });
