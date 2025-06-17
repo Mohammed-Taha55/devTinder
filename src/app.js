@@ -12,6 +12,37 @@ res.send("user added successfully")
     res.status(404).send("error saving user data"+err.message)
 }
 });
+app.get("/user",async(req,res)=>{
+    const userlastname = req.body.emailId;
+    try{
+        const users = await User.find({emailId:userlastname});
+        if(users.length==0){
+            res.status(404).send("user not found");
+        }else{
+            res.send(users);
+        }
+    }catch(err){
+        res.status(500).send("something went wrong")
+    }
+})
+app.get("/feed",async(req,res)=>{
+    try{
+        const users = await User.find({});
+        res.send(users);
+    }catch(err){
+        res.status(400).send("something went wrong");
+    }
+})
+app.delete("/user",async(req,res)=>{
+    const userId = req.body.userId;
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        res.send("user deleted auccessfully");
+    }
+    catch(err){
+     res.status(400).send("something went wrong");
+    }
+});
 ConnectDB()
 .then(()=>{
 console.log("DataBase successfully connected ");
@@ -20,5 +51,5 @@ app.listen(7777,()=>{
 });
 })
 .catch((err)=>{
-    console.error("failed connecting DB");
+    console.error("failed connecting DB"+err.message);
 });
