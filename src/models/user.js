@@ -39,11 +39,15 @@ const userschema= new mongoose.Schema({
     },
     gender:{
         type:String,
-        validate(value){
-            if(!["male","female","other"].includes(value)){
-             throw new Error("gender is not valid")  
-            }
-        }
+        enum: {
+            values: ["male", "female", "others"],
+            message: `{VALUE} is not a value gender type`,
+        },
+        // validate(value){
+        //     if(!["male","female","other"].includes(value)){
+        //      throw new Error("gender is not valid")  
+        //     }
+        // },
     },
     photoUrl:{
         type:String,
@@ -66,6 +70,7 @@ const userschema= new mongoose.Schema({
     timestamps:true,
 }
 );
+
 userschema.methods.getJWT = async function (){
     const user = this;
   const token = await  jwt.sign({ _id: user._id }, "DEV@Tinder$", {

@@ -10,8 +10,7 @@ patch/profile/edit
 patch/profile/password
 
 # connection/request/router:
-post/request/send/intrested/:user
-post/request/send/ignored/:user
+post/request/:status/:userId
 post/request/review/accepted/:request
 post/request/review/rejected/:request
 
