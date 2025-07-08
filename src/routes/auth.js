@@ -28,38 +28,32 @@ res.send("user added successfully")
     res.status(400).send("ERROR:"+err.message)
 }
 });
-authrouter.post("/login", async (req, res) => {
-    try {
-        const { emailId, password } = req.body;
-
-        // Step 1: Check if user exists
-        const user = await User.findOne({ emailId });
-        if (!user) {
-            return res.status(400).json({ error: "Invalid email or password" });
+authrouter.post("/login", async(req, res )=>{
+    try{
+        const{ emailId, password }=req.body;
+        const user = await User.findOne({ emailId: emailId });
+        if(!user){
+            throw new Error("wrong email or password!!")
         }
+    const ispasswordvalid = await user.validatePassword(password)
+    if(ispasswordvalid){
+//jwt tocken
+const token = await user.getJWT();
 
-        // Step 2: Validate password
-        const isPasswordValid = await user.validatePassword(password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: "Invalid email or password" });
-        }
+//add and send send response to the user
+res.cookie("token", token, {
+    expires: new Date(Date.now() + 8 * 3600000),
+});
 
-        // Step 3: Generate token
-        const token = await user.getJWT();
-
-        // Step 4: Set cookie
-        res.cookie("token", token, {
-            httpOnly: true,
-            expires: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours
-        });
-
-        // Step 5: Send user response
-        res.status(200).json({ message: "Login successful", user });
-
-    } catch (err) {
-        console.error("Login error:", err.message);
-        res.status(500).json({ error: "Something went wrong" });
+res.send(user);
     }
+else{
+    throw new Error("wrong email or password!!");
+}
+ }catch(err){
+
+    res.status(400).send("ERROR:"+err.message)
+}
 });
 authrouter.post("/logout", async(req, res)=>{
   res.cookie("token", null, {

@@ -75,7 +75,7 @@ const users = await User.find({
 .limit(limit);
 res.json({ data: users });
     } catch(err){
-        res.status(400).json({ message: err.meassage });
+        res.status(400).json({ message: err.message });
     }
 });
 module.exports = userRouter;
