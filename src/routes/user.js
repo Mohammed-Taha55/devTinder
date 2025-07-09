@@ -23,28 +23,29 @@ res.json({
     }
 });
 
-userRouter.get("/user/connections", userauth, async (req, res) =>{
-    try{
-const loggedInUser = req.user;
-const connectionRequests = await ConnectionRequest.find({
-    $or: [
+userRouter.get("/user/connections", userauth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const connectionRequests = await ConnectionRequest.find({
+      $or: [
         { toUserId: loggedInUser._id, status: "accepted" },
         { fromUserId: loggedInUser._id, status: "accepted" },
+      ],
+    })
+      .populate("fromUserId", USER_SAFE_DATA)
+      .populate("toUserId", USER_SAFE_DATA);
 
-    ],
-})
-  .populate("fromUserId", USER_SAFE_DATA )
-  .populate("toUserId", USER_SAFE_DATA);
-const data = connectionRequests.map((row) => {
-if(row.fromUserId._id.toString() == loggedInUser._id.toString()){
-   return row.fromUserId
- }
- return row.toUserId;
- });
-res.json({ data })
-    } catch(err){
-res.status(400).send({ message: err.message })
-    }
+    const data = connectionRequests.map((row) => {
+      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        return row.toUserId; // other user
+      }
+      return row.fromUserId; // other user
+    });
+
+    res.json({ data });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
 });
 
 userRouter.get("/feed", userauth, async (req, res) => {
