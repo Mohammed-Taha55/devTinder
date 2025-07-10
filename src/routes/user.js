@@ -37,9 +37,9 @@ userRouter.get("/user/connections", userauth, async (req, res) => {
 
     const data = connectionRequests.map((row) => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.toUserId; // other user
+        return row.toUserId;
       }
-      return row.fromUserId; // other user
+      return row.fromUserId; 
     });
 
     res.json({ data });

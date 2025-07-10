@@ -20,9 +20,16 @@ const user = new User ({
     password:passwordHash
 });
 //creting a new instance of the user model
-await user.save();
+const savedUser = await user.save();
+const token = await savedUser.getJWT();
 
-res.send("user added successfully")
+//add and send send response to the user
+res.cookie("token", token, {
+    expires: new Date(Date.now() + 8 * 3600000),
+});
+
+
+res.json({message: "user added successfully!", data: savedUser})
 } catch(err){
 
     res.status(400).send("ERROR:"+err.message)
