@@ -32,7 +32,7 @@ res.cookie("token", token, {
 res.json({message: "user added successfully!", data: savedUser})
 } catch(err){
 
-    res.status(400).send("ERROR:"+err.message)
+    res.status(400).send("ERROR: invalid credentials")
 }
 });
 authrouter.post("/login", async(req, res )=>{
