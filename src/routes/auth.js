@@ -25,6 +25,9 @@ const token = await savedUser.getJWT();
 
 //add and send send response to the user
 res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     expires: new Date(Date.now() + 8 * 3600000),
 });
 
@@ -49,6 +52,9 @@ const token = await user.getJWT();
 
 //add and send send response to the user
 res.cookie("token", token, {
+     httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // true in deployed
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     expires: new Date(Date.now() + 8 * 3600000),
 });
 
