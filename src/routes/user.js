@@ -26,6 +26,7 @@ res.json({
 userRouter.get("/user/connections", userauth, async (req, res) => {
   try {
     const loggedInUser = req.user;
+
     const connectionRequests = await ConnectionRequest.find({
       $or: [
         { toUserId: loggedInUser._id, status: "accepted" },
@@ -36,10 +37,10 @@ userRouter.get("/user/connections", userauth, async (req, res) => {
       .populate("toUserId", USER_SAFE_DATA);
 
     const data = connectionRequests.map((row) => {
-      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.toUserId;
-      }
-      return row.fromUserId; 
+      // return the OTHER user's full object
+      return row.fromUserId._id.toString() === loggedInUser._id.toString()
+        ? row.toUserId
+        : row.fromUserId;
     });
 
     res.json({ data });
@@ -47,6 +48,8 @@ userRouter.get("/user/connections", userauth, async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 });
+
+
 
 userRouter.get("/feed", userauth, async (req, res) => {
     try{
